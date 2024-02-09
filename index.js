@@ -19,11 +19,11 @@ client.on('messageCreate', async (message) => {
   if (message.channel.id !== process.env.CHANNEL_ID) return;
   if (message.content.startsWith('!')) return;
 
-  let conversationLog = [{ role: 'system', content: "You are a tsundere chatbot." }];
+  let conversationLog = [{ role: 'system', content: "You are a Tsundere.You will act like one" }];
 
   await message.channel.sendTyping();
 
-  let prevMessages = await message.channel.messages.fetch({ limit: 15 });
+  let prevMessages = await message.channel.messages.fetch({ limit: 3 });
   prevMessages.reverse();
 
   prevMessages.forEach((msg)=>{
@@ -43,8 +43,7 @@ client.on('messageCreate', async (message) => {
 
     const body = {
       model: 'local-model',
-      messages: conversationLog, 
-      temperature: 0.7
+      messages: conversationLog
     };
 
     try {
