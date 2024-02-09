@@ -29,7 +29,7 @@ client.on('messageCreate', async (message) => {
   prevMessages.forEach((msg)=>{
     if (message.content.startsWith('!')) return;
     if (msg.author.id !== client.user.id && message.author.bot) return;
-    if (msg.author.id !== message.author.id) return;
+    if (msg.author.id !== message.author.id ) return;
 
     conversationLog.push({
       role: 'user',
@@ -56,7 +56,13 @@ client.on('messageCreate', async (message) => {
 
       const data = response.data; 
 
-      message.reply(data.choices[0].message.content + `<@${message.author.id}>`);
+      // Split message into chunks of 2000 characters or less
+      const chunks = splitMessage(data.choices[0].message.content + `<@${message.author.id}>`, { maxLength: 2000 });
+
+      // Send each chunk as a separate message
+      for (const chunk of chunks) {
+        await message.reply(chunk);
+      }
     } catch (error) {
       console.error('Error:', error);
     }
@@ -65,5 +71,23 @@ client.on('messageCreate', async (message) => {
   createChatCompletion();
 
 });
+
+// Function to split message into chunks
+function splitMessage(message, options) {
+    const { maxLength = 2000, char = '\n', prepend = '', append = '' } = options || {};
+    if (message.length <= maxLength) return [message];
+    const splitText = message.split(char);
+    if (splitText.some(chunk => chunk.length > maxLength)) throw new RangeError('SPLIT_MAX_LEN');
+    const messages = [];
+    let msg = '';
+    for (const chunk of splitText) {
+        if (msg && (msg + char + chunk + append).length > maxLength) {
+            messages.push(msg + append);
+            msg = prepend;
+        }
+        msg += (msg && msg !== prepend ? char : '') + chunk;
+    }
+    return messages.concat(msg).filter(m => m);
+}
 
 client.login(process.env.TOKEN);
