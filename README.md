@@ -26,6 +26,8 @@
 
   <h2>Installation</h2>
   <ol>
+    <li>Download and setup LM Studio</li>
+    <a href="https://lmstudio.ai/">Click here to Download</a>
     <li>Clone the repository:</li>
     <code>git clone https://github.com/Dragon4926/Muse-Chan.git</code>
     <li>unzip the zip file</li>
